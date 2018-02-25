@@ -65,10 +65,10 @@ public class DetailActivity extends AppCompatActivity {
 
     private void populateUI(Sandwich sandwich) {
 
-        TextView TV_AKA = findViewById(R.id.also_known_tv);
-        TextView TV_Desc = findViewById(R.id.description_tv);
-        TextView TV_Ingredients = findViewById(R.id.ingredients_tv);
-        TextView TV_Origin = findViewById(R.id.origin_tv);
+        TextView tv_AKA = findViewById(R.id.also_known_tv);
+        TextView tv_Desc = findViewById(R.id.description_tv);
+        TextView tv_Ingredients = findViewById(R.id.ingredients_tv);
+        TextView tv_Origin = findViewById(R.id.origin_tv);
 
         List<String> lsAKA = sandwich.getAlsoKnownAs();
         String sDesc = sandwich.getDescription();
@@ -76,27 +76,13 @@ public class DetailActivity extends AppCompatActivity {
         String sOrigin= sandwich.getPlaceOfOrigin();
 
         for (String aka : lsAKA)
-        {
-            if (aka.endsWith(","))
-                aka = aka.substring(0,aka.length()-1);
+            tv_AKA.append(aka+"\n");
 
-            if (!aka.trim().isEmpty())
-                TV_AKA.append(aka+"\n");
-        }
 
         for (String ing : lsIngredients)
-        {
-            if (ing.endsWith(","))
-                ing = ing.substring(0,ing.length()-1);
+            tv_Ingredients.append((ing+"\n"));
 
-            if (!ing.trim().isEmpty())
-                TV_Ingredients.append((ing+"\n"));
-        }
-
-        TV_Desc.setText(sDesc);
-        TV_Origin.setText(sOrigin);
-
-
-
+        tv_Desc.setText(sDesc);
+        tv_Origin.setText(sOrigin);
     }
 }

@@ -1,56 +1,49 @@
 package com.udacity.sandwichclub.utils;
 
+import android.util.Log;
+
 import com.udacity.sandwichclub.model.Sandwich;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
- * Utility functions to handle JSON data.
+ * Utility functions to handle JSON data using JSONObject.
  */
 public class JsonUtils {
 
     public static Sandwich parseSandwichJson(String json) {
 
-        final String[] saAttributes = {"mainName", "alsoKnownAs", "placeOfOrigin", "description", "image", "ingredients"};
+        if (json != null) {
+            try {
+                JSONObject jsonObj = new JSONObject(json);
+                JSONObject name = jsonObj.getJSONObject("name");
 
-        /* String array to hold each day's weather String */
-        String sSeparatorStart = "\":";
-        String sSeparatorEnd = ",\"";
+                String mainName = name.getString("mainName");
+                JSONArray alsoKnownAs = name.getJSONArray("alsoKnownAs");
+                String placeOfOrigin = jsonObj.getString("placeOfOrigin");
+                String description = jsonObj.getString("description");
+                String image = jsonObj.getString("image");
+                JSONArray ingredients = jsonObj.getJSONArray("ingredients");
 
-        List<String> lSplittedJson = new ArrayList<String>() {
-        };
-        for (Integer i = 0; i < saAttributes.length; i++) {
-            String placeholder = saAttributes[i] + sSeparatorStart;
-            Integer iStartIndex = json.lastIndexOf(placeholder);
-            if (i != saAttributes.length - 1) {
-                Integer iEndIndex = json.indexOf(sSeparatorEnd + saAttributes[i + 1]);
 
-                lSplittedJson.add(json.substring(iStartIndex + placeholder.length(), iEndIndex).replaceAll("[\\[{}\\]\"]", ""));
-            } else
-                lSplittedJson.add(json.substring(iStartIndex + placeholder.length()).replaceAll("[\\[{}\\]\"]", ""));
+                List<String> lsAlsoKnownAs = new ArrayList<>(), lsIngredients = new ArrayList<>();
+
+                for (int i = 0; i < alsoKnownAs.length(); i++)
+                    lsAlsoKnownAs.add(String.valueOf(alsoKnownAs.get(i)));
+
+                for (int i = 0; i < ingredients.length(); i++)
+                    lsIngredients.add(String.valueOf(ingredients.get(i)));
+                return new Sandwich(mainName, lsAlsoKnownAs, placeOfOrigin, description, image, lsIngredients);
+
+            } catch (JSONException e) {
+                Log.e("JSONException", "Json parsing error: " + e.getMessage());
+            }
         }
-
-        String mainName = lSplittedJson.get(0), alsoKnownAs = lSplittedJson.get(1), placeOfOrigin = lSplittedJson.get(2),
-                description = lSplittedJson.get(3), image = lSplittedJson.get(4), ingredients = lSplittedJson.get(5);
-
-        List<String> lsAlsoKnownAs = new ArrayList<String>(), lsIngredients=new ArrayList<String>();
-
-        if (!alsoKnownAs.isEmpty())
-            lsAlsoKnownAs = Arrays.asList(alsoKnownAs.trim().split(","));
-
-        if (!ingredients.isEmpty())
-        {
-            String [] saIngredients = ingredients.trim().split("(?=\\p{Upper})");
-            if (saIngredients.length == 2)
-                saIngredients = ingredients.trim().split(",");
-
-            lsIngredients = Arrays.asList(saIngredients);
-        }
-
-
-        return new Sandwich(mainName, lsAlsoKnownAs, placeOfOrigin, description, image, lsIngredients);
+        return null;
     }
-
 }
